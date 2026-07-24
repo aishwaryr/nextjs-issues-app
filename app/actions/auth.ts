@@ -41,7 +41,7 @@ export type ActionResponse = {
   error?: string
 }
 
-export const signin = async (formData: FormData): Promise<ActionResponse> => {
+export const signIn = async (formData: FormData): Promise<ActionResponse> => {
   try {
     const data = {
       email: formData.get('email') as string,
@@ -99,7 +99,7 @@ export const signin = async (formData: FormData): Promise<ActionResponse> => {
   }
 }
 
-export const signup = async (formData: FormData) => {
+export const signUp = async (formData: FormData) => {
   try {
     const data = {
       email: formData.get('email') as string,
