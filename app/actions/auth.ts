@@ -15,16 +15,28 @@ import { error } from 'console'
 
 // Define Zod schema for signin validation
 const SignInSchema = z.object({
-  email: z.string().min(1, 'Email is required').email('Invalid email format'),
-  password: z.string().min(1, 'Password is required'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Invalid email format'),
+  password: z
+    .string()
+    .min(1, 'Password is required'),
 })
 
 // Define Zod schema for signup validation
 const SignUpSchema = z
   .object({
-    email: z.string().min(1, 'Email is required').email('Invalid email format'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
+    email: z
+      .string()
+      .min(1, 'Email is required')
+      .email('Invalid email format'),
+    password: z
+      .string()
+      .min(6, 'Password must be at least 6 characters'),
+    confirmPassword: z
+      .string()
+      .min(1, 'Please confirm your password'),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -54,11 +66,12 @@ export const signIn = async (formData: FormData): Promise<ActionResponse> => {
       return {
         success: false,
         message: 'Validation failed',
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: validationResult.error
+          .flatten().fieldErrors,
       }
     }
 
-    const user = await getUserByEmail(validationResult.data.email)
+    const user = await getUserByEmail(data.email)
 
     if (!user) {
       return {
@@ -99,42 +112,55 @@ export const signIn = async (formData: FormData): Promise<ActionResponse> => {
   }
 }
 
-export const signUp = async (formData: FormData) => {
+export const signUp = async (formData: FormData): Promise<ActionResponse> => {
   try {
+    // small delay to simulate network latency
+    await mockDelay(700)
+
+    // Extract data from form.
     const data = {
       email: formData.get('email') as string,
       password: formData.get('password') as string,
       confirmPassword: formData.get('confirmPassword'),
     }
 
+    // Validate with Zod
     const validationResult = SignUpSchema.safeParse(data)
-
     if (!validationResult.success) {
       return {
         success: false,
         message: 'Validation failed',
-        errors: validationResult.error.flatten().fieldErrors,
+        errors: validationResult.error
+          .flatten().fieldErrors,
       }
     }
 
+    // Check if user already exists
     const existingUser = await getUserByEmail(data.email)
-
     if (existingUser) {
       return {
         success: false,
         message: 'email already exists',
-        errors: ['email already exists'],
+        errors: { email: ['email already exists'] },
       }
     }
 
+    // Create new user
     const user = await createUser(data.email, data.password)
-
     if (!user) {
       return {
         success: false,
-        message: 'try again',
-        errors: ['account could not be created'],
+        message: 'Failed to create user',
+        error: 'Failed to create',
       }
+    }
+
+    // Create session for the newly registered user
+    await createSession(user.id)
+
+    return {
+      success: true,
+      message: 'Account created successfully',
     }
   } catch (e) {
     console.error(e)
