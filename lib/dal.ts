@@ -52,6 +52,7 @@ export const getUserByEmail = async (email: string) => {
 
 export const getIssues = async () => {
   try {
+    mockDelay(700);
     // fix data leak, as currently returning all issues with whole user object
     const result = await db.query.issues.findMany({
       with: {
