@@ -54,6 +54,7 @@ export const createIssue = async (data: IssueData): Promise<ActionResponse> => {
 
     // Validate with Zod
     const validationResult = IssueSchema.safeParse(data);
+
     if (!validationResult.success) {
       return {
         success: false,
@@ -65,6 +66,7 @@ export const createIssue = async (data: IssueData): Promise<ActionResponse> => {
 
     // Create issue with validated data
     const validatedData = validationResult.data;
+
     await db
       .insert(issues)
       .values({
@@ -86,4 +88,4 @@ export const createIssue = async (data: IssueData): Promise<ActionResponse> => {
   }
 };
 
-export const updateIssue = () => {};
+export const updateIssue = async () => {};

@@ -15,7 +15,6 @@ export const getCurrentUser = async () => {
       .select()
       .from(users)
       .where(eq(users.id, session.userId));
-
     return result[0] || null;
   } catch (error) {
     console.error('Error getting user by ID:', error);
