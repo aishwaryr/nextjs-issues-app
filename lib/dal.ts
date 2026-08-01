@@ -51,7 +51,7 @@ export const getUserByEmail = async (email: string) => {
 
 export const getIssues = async () => {
   try {
-    mockDelay(700);
+    mockDelay(500);
     // fix data leak, as currently returning all issues with whole user object
     const result = await db.query.issues.findMany({
       with: {
@@ -63,5 +63,18 @@ export const getIssues = async () => {
   } catch (error) {
     console.error('Error fetching issues: ', error);
     throw new Error('Failed to fetch issues');
+  }
+};
+
+export const getIssue = async (id: number) => {
+  try {
+    const issue = await db.query.issues.findFirst({
+      where: eq(issues.id, id),
+      with: { user: true },
+    });
+    return issue;
+  } catch (error) {
+    console.error(error);
+    return null;
   }
 };
