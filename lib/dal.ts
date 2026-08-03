@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { cache } from 'react';
 import { issues, users } from '@/db/schema';
 import { mockDelay } from './utils';
+import { cacheTag } from 'next/cache';
 
 // Current user
 export const getCurrentUser = async () => {
@@ -50,8 +51,10 @@ export const getUserByEmail = async (email: string) => {
 };
 
 export const getIssues = async () => {
+  'use cache';
+  cacheTag('issues');
   try {
-    mockDelay(500);
+    mockDelay(1000);
     // fix data leak, as currently returning all issues with whole user object
     const result = await db.query.issues.findMany({
       with: {
