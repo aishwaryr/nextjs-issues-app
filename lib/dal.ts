@@ -7,7 +7,8 @@ import { mockDelay } from './utils';
 import { cacheTag } from 'next/cache';
 
 // Current user
-export const getCurrentUser = async () => {
+export const getCurrentUser = cache(async () => {
+  await mockDelay(700);
   const session = await getSession();
   if (!session) return null;
 
@@ -21,7 +22,7 @@ export const getCurrentUser = async () => {
     console.error('Error getting user by ID:', error);
     return null;
   }
-};
+});
 
 // Get user by email
 // export const getUserByEmail = async (email: string) => {
