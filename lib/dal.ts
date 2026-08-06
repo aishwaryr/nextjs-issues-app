@@ -55,7 +55,7 @@ export const getIssues = async () => {
   'use cache';
   cacheTag('issues');
   try {
-    mockDelay(1000);
+    await mockDelay(1000);
     // fix data leak, as currently returning all issues with whole user object
     const result = await db.query.issues.findMany({
       with: {

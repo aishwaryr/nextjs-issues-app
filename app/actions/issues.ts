@@ -78,7 +78,7 @@ export const createIssue = async (data: IssueData): Promise<ActionResponse> => {
         userId: validatedData.userId,
       });
 
-    revalidateTag('issues', 'days');
+    revalidateTag('issues', { expire: 0 });
     return { success: true, message: 'Issue created successfully' };
   } catch (error) {
     console.error('Error creating issue: ', error);
